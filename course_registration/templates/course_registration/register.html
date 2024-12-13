@@ -1,0 +1,31 @@
+{% extends 'course_registration/base.html' %} 
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Course Registration</h2>
+          <form method="post" novalidate>
+            {% csrf_token %} {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}
+              </label>
+              {{ field }} {% if field.errors %}
+              <div class="alert alert-danger mt-2">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary cta-button">
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

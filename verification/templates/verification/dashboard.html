@@ -1,0 +1,51 @@
+{% extends 'verification/base.html' %}
+
+{% block title %}Dashboard - Safir Academy{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Recent Scans</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Registration ID</th>
+                                <th>Student Name</th>
+                                <th>Status</th>
+                                <th>Scanned By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scan in recent_scans %}
+                            <tr>
+                                <td>{{ scan.scan_timestamp|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'verification_result' scan.registration.registration_id %}">
+                                        {{ scan.registration.registration_id }}
+                                    </a>
+                                </td>
+                                <td>{{ scan.registration.full_name }}</td>
+                                <td>
+                                    <span class="badge {% if scan.scan_status == 'valid' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ scan.get_scan_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ scan.scanned_by.username }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No scans recorded yet</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

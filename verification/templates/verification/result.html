@@ -1,0 +1,48 @@
+{% extends 'verification/base.html' %}
+
+{% block title %}Verification Result - Safir Academy{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Verification Result</h3>
+                
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% else %}
+                    <div class="verification-result">
+                        <div class="result-item">
+                            <strong>Full Name:</strong>
+                            <span>{{ registration.full_name }}</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Registration ID:</strong>
+                            <span>{{ registration.registration_id }}</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Email:</strong>
+                            <span>{{ registration.email }}</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Preferred Schedule:</strong>
+                            <span>{{ registration.get_preferred_schedule_display }}</span>
+                        </div>
+                        <div class="result-item">
+                            <strong>Registration Date:</strong>
+                            <span>{{ registration.registration_date|date:"F d, Y H:i" }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'scanner' %}" class="btn btn-primary">Back to Scanner</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

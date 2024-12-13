@@ -1,0 +1,31 @@
+{% extends 'course_registration/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow">
+                <div class="card-body">
+                    <i class="fas fa-check-circle success-check mb-4"></i>
+                    <h2 class="card-title">Registration Successful!</h2>
+                    <p class="lead">Thank you for registering for our UI/UX Design course.</p>
+                    <p>Your registration ID is: <strong>{{ registration_id }}</strong></p>
+                    <p>We've sent you an email with your registration details and QR code.</p>
+                    <div class="mt-4">
+                        <p>Please check your email for:</p>
+                        <ul class="list-unstyled">
+                            <li>✔️ Registration confirmation</li>
+                            <li>✔️ Course schedule</li>
+                            <li>✔️ Payment instructions</li>
+                            <li>✔️ QR code for course access</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

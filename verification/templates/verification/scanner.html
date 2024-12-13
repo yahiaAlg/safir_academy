@@ -1,0 +1,198 @@
+{% extends 'verification/base.html' %}
+{% load static %}
+
+{% block title %}QR Scanner - Safir Academy{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>QR Code Scanner</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div id="scanner-container">
+                        <video id="scanner-video" style="width: 100%"></video>
+                    </div>
+                    <div class="mt-3">
+                        <button id="start-camera" class="btn btn-primary">Start Camera</button>
+                        <button id="switch-camera" class="btn btn-secondary">Switch Camera</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>OR</h5>
+                    <form id="upload-form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Upload QR Code Image</label>
+                            <input type="file" name="qr_image" class="form-control" accept=".jpg,.jpeg,.png,.gif">
+                            <small class="text-muted">Supported formats: JPG, PNG, GIF (Max size: 5MB)</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Verification Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="result-content"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const scannerVideo = document.getElementById('scanner-video');
+const startButton = document.getElementById('start-camera');
+const switchButton = document.getElementById('switch-camera');
+const uploadForm = document.getElementById('upload-form');
+let currentStream = null;
+let currentCameraIndex = 0;
+
+async function startCamera() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+        }
+        
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { deviceId: videoDevices[currentCameraIndex]?.deviceId }
+        });
+        
+        scannerVideo.srcObject = stream;
+        currentStream = stream;
+        
+        // Start QR detection
+        detectQR();
+        
+    } catch (error) {
+        console.error('Camera error:', error);
+        showError('Failed to access camera');
+    }
+}
+
+async function detectQR() {
+    const worker = new Worker('/static/js/qr-worker.js');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    setInterval(() => {
+        if (scannerVideo.videoWidth) {
+            canvas.width = scannerVideo.videoWidth;
+            canvas.height = scannerVideo.videoHeight;
+            context.drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            worker.postMessage({ imageData });
+        }
+    }, 200);
+    
+    worker.onmessage = async function(e) {
+        if (e.data) {
+            await verifyQR(e.data);
+        }
+    };
+}
+
+async function verifyQR(qrData) {
+    try {
+        const response = await fetch('/verify/verify-qr/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ registration_id: qrData })
+        });
+        
+        const result = await response.json();
+        showResult(result);
+        
+    } catch (error) {
+        console.error('Verification error:', error);
+        showError('Failed to verify QR code');
+    }
+}
+
+function showResult(result) {
+    const resultContent = document.getElementById('result-content');
+    
+    if (result.status === 'success') {
+        resultContent.innerHTML = `
+            <div class="alert alert-success">
+                <h4>Valid Registration</h4>
+                <p><strong>Name:</strong> ${result.data.full_name}</p>
+                <p><strong>Course:</strong> ${result.data.course}</p>
+                <p><strong>Schedule:</strong> ${result.data.preferred_schedule}</p>
+            </div>
+        `;
+    } else {
+        resultContent.innerHTML = `
+            <div class="alert alert-danger">
+                <h4>Error</h4>
+                <p>${result.message}</p>
+            </div>
+        `;
+    }
+    
+    new bootstrap.Modal(document.getElementById('resultModal')).show();
+}
+
+function showError(message) {
+    const resultContent = document.getElementById('result-content');
+    resultContent.innerHTML = `
+        <div class="alert alert-danger">
+            <h4>Error</h4>
+            <p>${message}</p>
+        </div>
+    `;
+    new bootstrap.Modal(document.getElementById('resultModal')).show();
+}
+
+startButton.addEventListener('click', startCamera);
+switchButton.addEventListener('click', () => {
+    currentCameraIndex++;
+    startCamera();
+});
+
+uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(uploadForm);
+    
+    try {
+        const response = await fetch('/verify/verify-qr/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        showResult(result);
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        showError('Failed to upload image');
+    }
+});
+</script>
+{% endblock %}

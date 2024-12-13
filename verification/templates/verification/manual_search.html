@@ -1,0 +1,71 @@
+{% extends 'course_registration/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Manual Registration Verification</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.registration_id.id_for_label }}">Registration ID:</label>
+                            {{ form.registration_id }}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Verify Registration</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'scanner' %}" class="btn btn-outline-secondary">Back to Scanner</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    .card {
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border: none;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+    .form-control {
+        padding: 0.75rem;
+        border-radius: 4px;
+    }
+    .btn-primary {
+        padding: 0.75rem;
+        background-color: #007bff;
+        border: none;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-outline-secondary {
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}

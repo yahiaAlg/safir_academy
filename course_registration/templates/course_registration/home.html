@@ -1,0 +1,61 @@
+{% extends 'course_registration/base.html' %} 
+{% block content %}
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1 class="display-4 mb-4">Master UI/UX Design</h1>
+        <p class="lead mb-4">
+          Transform your career with our comprehensive UI/UX design course.
+          Learn from industry experts and build a stunning portfolio.
+        </p>
+        <a href="{% url 'register' %}" class="btn btn-lg cta-button"
+          >Register Now</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="row mb-5">
+    <div class="col-md-4 mb-4">
+      <div class="card feature-card">
+        <div class="card-body">
+          <h5 class="card-title">Course Details</h5>
+          <ul class="list-unstyled">
+            <li>📅 Start Date: December 19, 2024</li>
+            <li>⏱️ Duration: 1 day</li>
+            <li>💰 Fee: for free</li>
+            <li>👥 Limited to 30 students</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card feature-card">
+        <div class="card-body">
+          <h5 class="card-title">Course Outline</h5>
+          <ul class="list-unstyled">
+            <li>✔️ UI/UX Fundamentals</li>
+            <li>✔️ User Research</li>
+            <li>✔️ Wireframing & Prototyping</li>
+            <li>✔️ Design Systems</li>
+            <li>✔️ Portfolio Building</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card feature-card">
+        <div class="card-body">
+          <h5 class="card-title">Instructor</h5>
+          <p>Oussama zobri &amp; Yahia lakhfif</p>
+          <p class="mb-0">experienced in UI/UX</p>
+          <p>Master Degree Graduate in Data Engineering and Web Technology </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: safir-academy
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn safir_academy.wsgi:application --workers 4 --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: false
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        sync: false
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: "admin"  # Change this
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: "your.email@example.com"  # Change this
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false  # Set this manually in Render dashboard
+    packages:
+      - libgl1
+      - libglib2.0-0
+      - libsm6
+      - libxext6
+      - libxrender-dev
