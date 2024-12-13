@@ -3,17 +3,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 from .forms import StaffLoginForm, ManualSearchForm
 from .models import ScanLog
 from course_registration.models import Registration
-from pyzbar.pyzbar import decode
+# from pyzbar.pyzbar import decode
 from PIL import Image
 import json
 import uuid
-import io
 import logging
 def staff_login(request):
     if request.user.is_authenticated:
@@ -74,29 +71,29 @@ def validate_image_file(image_file):
     
     return True
 
-def read_qr_code(image_file):
-    """Read QR code from image file."""
-    try:
-        # Open image using PIL
-        image = Image.open(image_file)
+# def read_qr_code(image_file):
+#     """Read QR code from image file."""
+#     try:
+#         # Open image using PIL
+#         image = Image.open(image_file)
         
-        # Convert to RGB if necessary
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
+#         # Convert to RGB if necessary
+#         if image.mode != 'RGB':
+#             image = image.convert('RGB')
         
-        # Decode QR code
-        decoded_objects = decode(image)
+#         # Decode QR code
+#         decoded_objects = decode(image)
         
-        if not decoded_objects:
-            raise ValueError("No QR code found in image")
+#         if not decoded_objects:
+#             raise ValueError("No QR code found in image")
         
-        # Get the first QR code data
-        qr_data = decoded_objects[0].data.decode('utf-8')
-        return qr_data
+#         # Get the first QR code data
+#         qr_data = decoded_objects[0].data.decode('utf-8')
+#         return qr_data
         
-    except Exception as e:
-        logger.error(f"Error reading QR code: {str(e)}")
-        raise ValueError(f"Error reading QR code: {str(e)}")
+#     except Exception as e:
+#         logger.error(f"Error reading QR code: {str(e)}")
+#         raise ValueError(f"Error reading QR code: {str(e)}")
 
 
 import cv2
@@ -106,33 +103,33 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# def read_qr_code(image_file):
-#     """Read QR code from image file."""
-#     try:
-#         # Open image using PIL
-#         pil_image = Image.open(image_file)
+def read_qr_code(image_file):
+    """Read QR code from image file."""
+    try:
+        # Open image using PIL
+        pil_image = Image.open(image_file)
         
-#         # Convert to RGB if necessary
-#         if pil_image.mode != 'RGB':
-#             pil_image = pil_image.convert('RGB')
+        # Convert to RGB if necessary
+        if pil_image.mode != 'RGB':
+            pil_image = pil_image.convert('RGB')
         
-#         # Convert PIL image to OpenCV format
-#         opencv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+        # Convert PIL image to OpenCV format
+        opencv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
         
-#         # Initialize QR code detector
-#         qr_detector = cv2.QRCodeDetector()
+        # Initialize QR code detector
+        qr_detector = cv2.QRCodeDetector()
         
-#         # Detect and decode QR code
-#         qr_data, bbox, _ = qr_detector.detectAndDecode(opencv_image)
+        # Detect and decode QR code
+        qr_data, bbox, _ = qr_detector.detectAndDecode(opencv_image)
         
-#         if not qr_data:
-#             raise ValueError("No QR code found in image")
+        if not qr_data:
+            raise ValueError("No QR code found in image")
         
-#         return qr_data
+        return qr_data
         
-#     except Exception as e:
-#         logger.error(f"Error reading QR code: {str(e)}")
-#         raise ValueError(f"Error reading QR code: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error reading QR code: {str(e)}")
+        raise ValueError(f"Error reading QR code: {str(e)}")
 
 def verify_qr(request):
     """Handle QR code verification from both camera and file upload."""
