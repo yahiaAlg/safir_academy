@@ -1,0 +1,30 @@
+{% extends 'course_registration/base.html' %} {% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <div class="card shadow">
+        <div class="card-body">
+          <i
+            class="fas fa-exclamation-circle text-danger mb-4"
+            style="font-size: 3rem"
+          ></i>
+          <h2 class="card-title">Registration Closed</h2>
+          <p class="lead">
+            We're sorry, but the registration for this course has reached its
+            limit.
+          </p>
+          <p>
+            Thank you for your interest! Please check back later for future
+            courses.
+          </p>
+          <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary"
+              >Back to Home</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
