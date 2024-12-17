@@ -29,7 +29,7 @@ def register(request):
             return redirect("success", registration_id=registration.registration_id)
     else:
 
-        max_quota = 50  # Example: adjust this as needed
+        max_quota = 40  # Example: adjust this as needed
         current_registrations = Registration.objects.distinct("phone").count()
         morning_count = (
             Registration.objects.filter(preferred_schedule="morning")
